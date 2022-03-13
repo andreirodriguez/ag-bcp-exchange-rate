@@ -1,0 +1,79 @@
+<mat-tab-group mat-align-tabs="start">
+    <mat-tab label="First">
+
+        <form class="example-form" [formGroup]="formGroup">
+            <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Ticket</mat-label>
+            <input matInput placeholder="Ticket" formControlName="ticket">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Monto</mat-label>
+                <input matInput placeholder="Monto" formControlName="amount">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Moneda Origen</mat-label>
+                <mat-select formControlName="money_origin">
+                <mat-option [value]="option.value" *ngFor="let option of money">{{ option.viewValue }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Moneda Destino</mat-label>
+                <mat-select formControlName="money_destiny">
+                <mat-option [value]="option.value" *ngFor="let option of arrMoneyDestiny">{{ option.viewValue }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Tipo de cambio</mat-label>
+                <input matInput placeholder="Tipo de cambio" formControlName="tipo_cambio">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Nuevo monto</mat-label>
+            <input matInput readonly placeholder="Nuevo monto" formControlName="current_exchange">
+        </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Usuario</mat-label>
+                <input matInput placeholder="Usuario" formControlName="username">
+            </mat-form-field>
+
+        </form>
+        <button mat-button color="primary" (click)="hanlderSaveExchange()">Aceptar</button>
+    </mat-tab>
+    <mat-tab label="Second">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <!-- Position Column -->
+            <ng-container matColumnDef="ticket">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element"> {{element.ticket}} </td>
+            </ng-container>
+        
+            <!-- Name Column -->
+            <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+            </ng-container>
+        
+            <!-- Weight Column -->
+            <ng-container matColumnDef="date_register">
+            <th mat-header-cell *matHeaderCellDef> Weight </th>
+            <td mat-cell *matCellDef="let element"> {{element.date_register}} </td>
+            </ng-container>
+        
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef> Symbol </th>
+            <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+  
+    </mat-tab>
+</mat-tab-group>
