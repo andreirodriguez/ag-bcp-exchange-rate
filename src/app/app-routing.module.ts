@@ -15,7 +15,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'exchange-rates',
+    redirectTo: 'login',
     pathMatch: 'full'
   }
 ];

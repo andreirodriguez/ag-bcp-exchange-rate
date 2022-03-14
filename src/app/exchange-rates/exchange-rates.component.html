@@ -2,28 +2,40 @@
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Position Column -->
-    <ng-container matColumnDef="ticket">
-      <th mat-header-cell *matHeaderCellDef> No. </th>
-      <td mat-cell *matCellDef="let element"> {{element.ticket}} </td>
-    </ng-container>
-  
-    <!-- Name Column -->
-    <ng-container matColumnDef="amount">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Ticket </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
     </ng-container>
   
     <!-- Weight Column -->
-    <ng-container matColumnDef="date_register">
-      <th mat-header-cell *matHeaderCellDef> Weight </th>
-      <td mat-cell *matCellDef="let element"> {{element.date_register}} </td>
+    <ng-container matColumnDef="amountOrigin">
+      <th mat-header-cell *matHeaderCellDef> Monto Origen </th>
+      <td mat-cell *matCellDef="let element"> {{element.currencyOriginSymbol}} {{element.amountOrigin | number:'1.2'}} </td>
     </ng-container>
   
     <!-- Symbol Column -->
-    <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef> Symbol </th>
-      <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+    <ng-container matColumnDef="rateExchange">
+      <th mat-header-cell *matHeaderCellDef> Tipo de cambio </th>
+      <td mat-cell *matCellDef="let element"> {{element.rateExchange | number:'1.2'}} </td>
     </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="amountExchange">
+      <th mat-header-cell *matHeaderCellDef> Monto Destino </th>
+      <td mat-cell *matCellDef="let element"> {{element.currencyExchangeSymbol}} {{element.amountExchange | number:'1.2'}} </td>
+    </ng-container>  
+    
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="registerDatetime">
+      <th mat-header-cell *matHeaderCellDef> Fecha Registro </th>
+      <td mat-cell *matCellDef="let element"> {{element.registerDatetime | date  : 'dd/mm/yyyy'}} </td>
+    </ng-container>      
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="registerUserFullname">
+      <th mat-header-cell *matHeaderCellDef> Usuario Registro </th>
+      <td mat-cell *matCellDef="let element"> {{element.registerUserFullname}} </td>
+    </ng-container>          
 
       <!-- Symbol Column -->
     <ng-container matColumnDef="actions">

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ExchangeRatesService } from '../exchange-rates.service';
+import { ExchangeRateRequest, ExchangeRatesService } from '../exchange-rates.service';
 
 @Component({
   selector: 'app-dialog-create-exchange',
@@ -19,35 +19,26 @@ export class DialogCreateExchangeComponent implements OnInit {
     this.formGroup = this.__buildFormGroup();
    }
 
-  money = [
-    {
-      value: 1,
-      viewValue: 'Dolar'
-    },
-    {
-      value: 2,
-      viewValue: 'Soles'
-    },
-    {
-      value: 3,
-      viewValue: 'Euros'
-    }
-  ]
-
+  money = []
   arrMoneyDestiny = [];
   ngOnInit() {
-    this.hanlderValueChanges();
+
+    this.__exchangeRateService.getMoney().subscribe(result => {
+      this.money = result;
+
+      this.hanlderValueChanges();
+    }); 
+    
+    
   }
 
   __buildFormGroup():FormGroup {
     return this.__fb.group({
-      ticket: [''],
-      amount: [''],
-      money_origin: [''],
-      money_destiny: [''],
-      tipo_cambio: [''],
-      user: [''],
-      current_exchange: ['']
+      currencyOriginId: [''],
+      amountOrigin: [''],
+      currencyExchangeId: [''],      
+      rateExchange: [''],
+      amountExchange: ['']
     })
   }
   findElementsMoney(id) {
@@ -56,45 +47,42 @@ export class DialogCreateExchangeComponent implements OnInit {
 
   hanlderValueChanges() {
     this.formGroup.valueChanges.subscribe(result => {
-      if(result.amount != "" && result.tipo_cambio != "" && result.money_destiny) {
+      if(result.amountOrigin != "" && result.rateExchange != "" && result.currencyExchangeId) 
+      {
         const money_destiny = this.findElementsMoney(result.money_destiny);
-        if(money_destiny.operator == 'm') this.formGroup.controls.current_exchange.setValue(result.amount * result.tipo_cambio, {emitEvent: false});
-        else this.formGroup.controls.current_exchange.setValue(result.amount / result.tipo_cambio, {emitEvent: false});
+
+        if(money_destiny.mathematicalOperator == 'm') 
+          this.formGroup.controls.amountExchange.setValue(result.amountOrigin * result.rateExchange, {emitEvent: false});
+        else 
+          this.formGroup.controls.amountExchange.setValue(result.amountOrigin / result.rateExchange, {emitEvent: false});
       }
     })
 
-    this.formGroup.controls.money_origin.valueChanges.subscribe(result => {
+    this.formGroup.controls.currencyOriginId.valueChanges.subscribe(result => {
       console.log(result);
-      this.arrMoneyDestiny = [
-        {
-          value: 2,
-          viewValue: 'Soles',
-          operator: 'm'
-        },
-        {
-          value: 3,
-          viewValue: 'Euros',
-          operator: 'd'
-        }
-      ]
+
       this.__exchangeRateService.getMoneyDestiny(result).subscribe( result => {
-        //Setear lista de monedas destino
+        this.arrMoneyDestiny = result;
       })
     })
   }
 
   hanlderSaveExchange() {
-    let objCreateExchange = this.formGroup.value;
-    objCreateExchange.user = sessionStorage.getItem('user')['id'];
-    console.log(objCreateExchange);
+    let objCreateExchange:ExchangeRateRequest = {
+      currencyOriginId: this.formGroup.value.currencyOriginId,
+      amountOrigin: this.formGroup.value.amountOrigin,
+      currencyExchangeId: this.formGroup.value.currencyExchangeId,
+      rateExchange: this.formGroup.value.rateExchange,
+      registerUserId: JSON.parse(sessionStorage.getItem('user'))['id'],
+      registerUserFullname: JSON.parse(sessionStorage.getItem('user'))['user']
+    };
+
     this.__exchangeRateService.saveExchange(objCreateExchange).subscribe(
       result => {
         this.registerExchange.emit();
       },
       error => {
         alert('Hubo un error');
-        //@TODO eliminar el emit y solo ponerlo en el result
-        this.registerExchange.emit();
       }
     );
   }

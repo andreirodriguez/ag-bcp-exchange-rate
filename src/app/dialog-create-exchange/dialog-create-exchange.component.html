@@ -1,38 +1,35 @@
 <h1>Crear exchange</h1>
 
 <form class="example-form" [formGroup]="formGroup">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Ticket</mat-label>
-      <input matInput placeholder="Ticket" formControlName="ticket">
-    </mat-form-field>
+
+
+  <mat-form-field appearance="fill">
+    <mat-label>Moneda Origen</mat-label>
+    <mat-select formControlName="currencyOriginId">
+      <mat-option [value]="option.id" *ngFor="let option of money">{{ option.symbol }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
     <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Monto</mat-label>
-        <input matInput placeholder="Monto" formControlName="amount">
+        <mat-label>Monto Origen</mat-label>
+        <input matInput placeholder="Monto Origen" formControlName="amountOrigin" type="number">
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-        <mat-label>Moneda Origen</mat-label>
-        <mat-select formControlName="money_origin">
-          <mat-option [value]="option.value" *ngFor="let option of money">{{ option.viewValue }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-        <mat-label>Moneda Destino</mat-label>
-        <mat-select formControlName="money_destiny">
-          <mat-option [value]="option.value" *ngFor="let option of arrMoneyDestiny">{{ option.viewValue }}</mat-option>
-        </mat-select>
+      <mat-label>Moneda Destino</mat-label>
+      <mat-select formControlName="currencyExchangeId">
+        <mat-option [value]="option.currencyExchangeId" *ngFor="let option of arrMoneyDestiny">{{ option.currencyExchangeSymbol }}</mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Tipo de cambio</mat-label>
-        <input matInput placeholder="Tipo de cambio" formControlName="tipo_cambio">
+        <input matInput placeholder="Tipo de cambio" formControlName="rateExchange" type="number">
     </mat-form-field>
 
     <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Nuevo monto</mat-label>
-      <input matInput readonly placeholder="Nuevo monto" formControlName="current_exchange">
+      <mat-label>Monto Destino</mat-label>
+      <input matInput readonly placeholder="Monto Destino" formControlName="amountExchange" type="number">
   </mat-form-field>
 
   </form>

@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    sessionStorage.setItem('user', JSON.stringify({id: 5, user: 'admin', token: 'asdasd'}));
+    sessionStorage.setItem('user', JSON.stringify({id: 1, user: 'admin', token: 'asdasd'}));
     this.__router.navigate(['/exchange-rates']);
     this.__exchangeRateService.login(this.formGroup.value.usuario, this.formGroup.value.password).subscribe(result => {
     });

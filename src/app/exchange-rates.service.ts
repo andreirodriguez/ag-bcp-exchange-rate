@@ -14,27 +14,90 @@ export class ExchangeRatesService {
     private __httpClient: HttpClient
   ) { }
 
-  getDataByExchange(id):Observable<any> {
-    return this.__httpClient.get(environment.backend_url);
+  getDataByExchange(id):Observable<ExchangeRateResponse> {
+    return this.__httpClient.get<ExchangeRateResponse>(environment.backend_url + `exchange-rates/${id}`);
  }
 
-  getDataHistoryExchange(id):Observable<any> {
-    return this.__httpClient.get(environment.backend_url);
+  getDataHistoryExchange(id):Observable<ExchangeRateResponse[]> {
+    return this.__httpClient.get<ExchangeRateResponse[]>(environment.backend_url + `exchange-rates-audit/find-all/history?exchangeRateId=${1}&sort=register_datetime ASC`);
   }
 
-  getAllExchange():Observable<any> {
-     return this.__httpClient.get(environment.backend_url);
+  getAllExchange(currencyOriginId,currencyExchangeId,registerDateUntil,registerDateTo,pageIndex,pageSize):Observable<PaginationExchangeRateResponse> {
+     return this.__httpClient.get<PaginationExchangeRateResponse>(environment.backend_url + `exchange-rates/find-all/inbox?currencyOriginId=${currencyOriginId}&currencyExchangeId=${currencyExchangeId}&registerDateUntil=${registerDateUntil}&registerDateTo=${registerDateTo}&pageIndex=${pageIndex}&pageSize=${pageSize}&sort=register_datetime ASC`);
   }
 
-  getMoneyDestiny(moneySelected):Observable<any> {
-    return this.__httpClient.get(environment.backend_url);
+  getMoney():Observable<Currency[]> {
+    return this.__httpClient.get<Currency[]>(environment.backend_url + `currencies/search/active?sort=symbol asc`);
   }
 
-  saveExchange(objCreate) {
-    return this.__httpClient.post(environment.backend_url, objCreate);
+  getMoneyDestiny(currencyOriginId):Observable<CurrencyExchange[]> {
+    return this.__httpClient.get<CurrencyExchange[]>(environment.backend_url + `currencies-exchange/search/currency-origin?currencyOriginId=${currencyOriginId}&sort=currency_exchange_symbol asc`);
+  }
+
+  saveExchange(objCreate: ExchangeRateRequest) {
+    return this.__httpClient.post(environment.backend_url + `exchange-rates`, objCreate);
   }
 
   login(usuario, password) {
     return this.__httpClient.get(environment.backend_url);
   }
+}
+
+export interface PaginationExchangeRateResponse{
+  pagination: Pagination;
+  items: ExchangeRateResponse[];
+}
+
+export interface Pagination{
+  pageIndex: number;
+  pageSize: number;
+  pageCount: number;
+  sort: String;
+  total: number;
+}
+
+export interface ExchangeRateResponse{
+  id: number;
+  amountOrigin: number;
+  amountExchange: number;
+  rateExchange: number;
+  currencyOriginId: number;
+  currencyOriginTitle: String;
+  currencyOriginSymbol: String;
+  currencyExchangeId: number;
+  currencyExchangeTitle: String;
+  currencyExchangeSymbol: String;  
+  registerUserId: number;
+  registerUserFullname: String;
+  registerDatetime: Date;
+  active: Boolean;
+}
+
+export interface ExchangeRateRequest{
+  amountOrigin: number;
+  rateExchange: number;
+  currencyOriginId: number;
+  currencyExchangeId: number;
+  registerUserId: number;
+  registerUserFullname: String;
+}
+
+export interface Currency{
+  id: number;
+  title: String;
+  symbol: String;
+  active: Boolean;
+}
+
+export interface CurrencyExchange{
+  id: number;
+  currencyOriginId: number;
+  currencyOriginTitle: String;
+  currencyOriginSymbol: String;
+  currencyExchangeId: number;
+  currencyExchangeTitle: String;
+  currencyExchangeSymbol: String;  
+  mathematicalOperator: String;  
+  rateExchange: number; 
+  active: Boolean;
 }

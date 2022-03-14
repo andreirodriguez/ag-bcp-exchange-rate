@@ -1,14 +1,14 @@
 <div class="container-form">
 
     <form class="example-form" [formGroup]="formGroup">
-        <mat-form-field class="example-full-width" appearance="fill">
+        <mat-form-field class="example-full-width"  appearance="fill">
         <mat-label>Usuario</mat-label>
-        <input matInput placeholder="Usuario" formControlName="usuario">
+        <input matInput placeholder="Usuario" required="true" formControlName="usuario">
         </mat-form-field>
 
-        <mat-form-field class="example-full-width" appearance="fill">
+        <mat-form-field class="example-full-width"  appearance="fill">
             <mat-label>Password</mat-label>
-            <input matInput placeholder="Password" formControlName="password">
+            <input matInput placeholder="Password" required="true" formControlName="password" type="password">
         </mat-form-field>
 
 

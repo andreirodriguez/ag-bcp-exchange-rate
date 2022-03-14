@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { MatTableDataSource } from '@angular/material/table';
 import { DialogCreateExchangeComponent } from '../dialog-create-exchange/dialog-create-exchange.component';
 import { DialogEditExchangeComponent } from '../dialog-edit-exchange/dialog-edit-exchange.component';
-import { ExchangeRatesService } from '../exchange-rates.service';
+import { ExchangeRateResponse, ExchangeRatesService, PaginationExchangeRateResponse } from '../exchange-rates.service';
 
 @Component({
   selector: 'app-exchange-rates',
@@ -11,8 +11,8 @@ import { ExchangeRatesService } from '../exchange-rates.service';
   styleUrls: ['./exchange-rates.component.scss']
 })
 export class ExchangeRatesComponent implements OnInit {
-  dataSource:MatTableDataSource<IExchangeRate> = new MatTableDataSource();
-  displayedColumns = ['ticket','amount','date_register','username', 'actions'];
+  dataSource:MatTableDataSource<ExchangeRateResponse> = new MatTableDataSource();
+  displayedColumns = ['id','amountOrigin','rateExchange','amountExchange','registerDatetime','registerUserFullname','actions'];
   pageSize:number = 5
   length:number;
   pageSizeOptions:Array<number> = [5,10,15]
@@ -32,47 +32,10 @@ export class ExchangeRatesComponent implements OnInit {
   }
 
   handleGetAllExchange() {
-    this.dataSource.data = [
-      {
-        ticket: 1000,
-        id: 1,
-        amount: 1240.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 2,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 1000,
-        id: 3,
-        amount: 1240.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 4,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 5,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      }
-      
-    ]
-    this.length = 15
-    this.__exchangeRatesService.getAllExchange(/* this.pageNumber, this.pageSize */).subscribe(result => {
-    })  
+    this.__exchangeRatesService.getAllExchange(0,0,"","",1, this.pageSize).subscribe(result => {
+      this.dataSource.data = result.items;
+      this.length = result.pagination.total;
+    });  
   }
 
   openDialogCreateExchange() {
@@ -97,42 +60,10 @@ export class ExchangeRatesComponent implements OnInit {
     this.pageNumber = event.pageIndex;
     this.pageSize = event.pageSize;
 
-    this.__exchangeRatesService.getAllExchange(/* this.pageNumber, this.pageSize */).subscribe(result => {
-    })
-
-    this.dataSource.data = [
-      {
-        ticket: 2000,
-        amount: 1240.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 2001,
-        amount: 1400.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 2002,
-        amount: 1500.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 2003,
-        amount: 3000.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 2004,
-        amount: 500.5,
-        date_register: new Date(),
-        username: 'admin'
-      }
-      
-    ]
+    this.__exchangeRatesService.getAllExchange(0,0,"","",this.pageNumber, this.pageSize).subscribe(result => {
+      this.dataSource.data = result.items;
+      this.length = result.pagination.total;
+    });  
   }
 
 }

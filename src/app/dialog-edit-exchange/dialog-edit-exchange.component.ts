@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ExchangeRatesService } from '../exchange-rates.service';
+import { ExchangeRateResponse, ExchangeRatesService } from '../exchange-rates.service';
 import {MatTableDataSource, MAT_DIALOG_DATA} from '@angular/material';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -13,31 +14,12 @@ export class DialogEditExchangeComponent implements OnInit {
 
   formGroup:FormGroup;
 
-  money = [
-    {
-      value: 1,
-      viewValue: 'Dolar'
-    },
-    {
-      value: 2,
-      viewValue: 'Soles'
-    },
-    {
-      value: 3,
-      viewValue: 'Euros'
-    }
-  ]
-
+  money = []
   arrMoneyDestiny = [];
 
   //SECOND TAB
-  dataSource:MatTableDataSource<any> = new MatTableDataSource();
-  displayedColumns = ['ticket','amount','date_register','username'];
-  pageSize:number = 5
-  length:number;
-  pageSizeOptions:Array<number> = [5,10,15]
-  pageNumber:number;
-
+  dataSource:MatTableDataSource<ExchangeRateResponse> = new MatTableDataSource();
+  displayedColumns = ['amountOrigin','rateExchange','amountExchange','registerDatetime','registerUserFullname'];
 
   constructor(
     private __fb: FormBuilder,
@@ -46,77 +28,24 @@ export class DialogEditExchangeComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    let data = {
-      ticket: 1,
-      amount: 1000,
-      money_origin: 1,
-      money_destiny: 2,
-      tipo_cambio: 2,
-      username: 'admin',
-      current_exchange: 2000,
-    }
-    this.formGroup = this.__buildFormGroup(data);
-    this.getDataExchangeByID(this.data.id);
 
+    this.__exchangeRateService.getMoney().subscribe(result => {
+      this.money = result;
+    });
 
+    this.__exchangeRateService.getDataByExchange(this.data.id).subscribe(exchangeRate => {
+      debugger;
+      this.__exchangeRateService.getMoneyDestiny(exchangeRate.currencyOriginId).subscribe( result => {
+        this.arrMoneyDestiny = result;
 
-    //@TODO setear arrMoneyDestiny en el subscribe
-    this.arrMoneyDestiny = [
-      {
-        value: 2,
-        viewValue: 'Soles'
-      },
-      {
-        value: 3,
-        viewValue: 'Euros'
-      }
-    ]
-    this.__exchangeRateService.getMoneyDestiny(data.money_origin).subscribe( result => {
-      //Setear lista de monedas destino
-    })
+        this.formGroup = this.__buildFormGroup(exchangeRate);        
+      });
+    });     
 
-
-    //OBTENER DATA HISTORICA
-    this.dataSource.data = [
-      {
-        ticket: 1000,
-        id: 1,
-        amount: 1240.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 2,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 1000,
-        id: 3,
-        amount: 1240.5,
-        date_register: new Date,
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 4,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      },
-      {
-        ticket: 1001,
-        id: 5,
-        amount: 950.5,
-        date_register: new Date(),
-        username: 'admin'
-      }
-    ]
     this.__exchangeRateService.getDataHistoryExchange(this.data.id).subscribe(result => {
       this.dataSource.data = result
-    })
+    });    
+
   }
 
 
@@ -126,10 +55,14 @@ export class DialogEditExchangeComponent implements OnInit {
 
   hanlderValueChanges() {
     this.formGroup.valueChanges.subscribe(result => {
-      if(result.amount != "" && result.tipo_cambio != "" && result.money_destiny) {
+      if(result.amountOrigin != "" && result.rateExchange != "" && result.currencyExchangeId) 
+      {
         const money_destiny = this.findElementsMoney(result.money_destiny);
-        if(money_destiny.operator == 'm') this.formGroup.controls.current_exchange.setValue(result.amount * result.tipo_cambio, {emitEvent: false});
-        else this.formGroup.controls.current_exchange.setValue(result.amount / result.tipo_cambio, {emitEvent: false});
+
+        if(money_destiny.mathematicalOperator == 'm') 
+          this.formGroup.controls.amountExchange.setValue(result.amountOrigin * result.rateExchange, {emitEvent: false});
+        else 
+          this.formGroup.controls.amountExchange.setValue(result.amountOrigin / result.rateExchange, {emitEvent: false});
       }
     })
 
@@ -153,22 +86,15 @@ export class DialogEditExchangeComponent implements OnInit {
     })
   }
 
-  getDataExchangeByID(id) {
-    this.__exchangeRateService.getDataByExchange(id).subscribe( result => {
-      //@TODO setear data despues de obtenerla
-      //this.formGroup = this.__buildFormGroup(result);
-    })
-  }
 
   __buildFormGroup(data):FormGroup {
     return this.__fb.group({
-      ticket: [data.ticket],
-      amount: [data.amount],
-      money_origin: [data.money_origin],
-      money_destiny: [data.money_destiny],
-      tipo_cambio: [data.tipo_cambio],
-      username: [data.username],
-      current_exchange: [data.current_exchange]
+      id: [data.id || ""],
+      currencyOriginId: [data.currencyOriginId || ""],
+      amountOrigin: [data.amountOrigin || ""],
+      currencyExchangeId: [data.currencyExchangeId || ""],      
+      rateExchange: [data.rateExchange || ""],
+      amountExchange: [data.amountExchange || ""]      
     })
   }
 
