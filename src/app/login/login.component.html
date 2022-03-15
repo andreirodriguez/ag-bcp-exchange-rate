@@ -1,0 +1,19 @@
+<div class="container-form">
+
+    <form class="example-form" [formGroup]="formGroup">
+        <h1>Iniciar Sesión</h1>
+
+        <mat-form-field class="example-full-width"  appearance="fill">
+        <mat-label>Usuario</mat-label>
+        <input matInput placeholder="Usuario" required="true" formControlName="usuario">
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width"  appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" required="true" formControlName="password" type="password">
+        </mat-form-field>
+
+
+    <button mat-button color="primary" (click)="login()">Iniciar Sesión</button>
+    </form>
+</div>

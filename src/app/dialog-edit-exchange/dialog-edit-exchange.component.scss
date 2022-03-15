@@ -1,0 +1,16 @@
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    width: 100%;
+
+    th {
+        text-align: center;
+    }
+    
+    td {
+        padding: 0 40px;
+    }
+}
