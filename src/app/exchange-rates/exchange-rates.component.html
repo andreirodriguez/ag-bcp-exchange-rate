@@ -1,4 +1,37 @@
-<button mat-button color="primary" (click)="openDialogCreateExchange()">Crear</button>
+
+
+<form class="example-form" [formGroup]="formGroup">
+  <mat-form-field appearance="fill">
+    <mat-label>Moneda Origen</mat-label>
+    <mat-select formControlName="currencyOriginId">
+      <mat-option [value]="option.id" *ngFor="let option of money">{{ option.symbol }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Moneda Destino</mat-label>
+    <mat-select formControlName="currencyExchangeId">
+      <mat-option [value]="option.id" *ngFor="let option of money">{{ option.symbol }}</mat-option>
+    </mat-select>
+  </mat-form-field>  
+
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Fecha Desde</mat-label>
+    <input matInput placeholder="Fecha Desde" formControlName="dateUntil" type="date">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Fecha Hasta</mat-label>
+    <input matInput placeholder="Fecha Hasta" formControlName="dateTo" type="date">
+  </mat-form-field>    
+
+  <button mat-button color="primary" (click)="handleGetAllExchange()">Buscar</button>
+
+  <button mat-button color="primary" (click)="openDialogCreateExchange()">Nuevo Ticket</button>
+
+</form>
+
+
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Position Column -->
@@ -28,7 +61,7 @@
     <!-- Symbol Column -->
     <ng-container matColumnDef="registerDatetime">
       <th mat-header-cell *matHeaderCellDef> Fecha Registro </th>
-      <td mat-cell *matCellDef="let element"> {{element.registerDatetime | date  : 'dd/mm/yyyy'}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.registerDatetime | date  : 'dd/MM/yyyy'}} </td>
     </ng-container>      
 
     <!-- Symbol Column -->

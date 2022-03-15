@@ -25,21 +25,33 @@ export class DialogEditExchangeComponent implements OnInit {
     private __fb: FormBuilder,
     private __exchangeRateService: ExchangeRatesService,
     @Inject(MAT_DIALOG_DATA) public data: any
-    ) { }
+    ) { 
+    }
 
   ngOnInit() {
+
+    this.formGroup = this.__fb.group({
+      id: [null],
+      currencyOriginId: [null],
+      amountOrigin: [null],
+      currencyExchangeId: [null],      
+      rateExchange: [null],
+      amountExchange: [null]      
+    });
+    
+    this.hanlderValueChanges();    
 
     this.__exchangeRateService.getMoney().subscribe(result => {
       this.money = result;
     });
 
+
     this.__exchangeRateService.getDataByExchange(this.data.id).subscribe(exchangeRate => {
-      debugger;
       this.__exchangeRateService.getMoneyDestiny(exchangeRate.currencyOriginId).subscribe( result => {
         this.arrMoneyDestiny = result;
 
-        this.formGroup = this.__buildFormGroup(exchangeRate);        
-      });
+        this.__buildFormGroup(exchangeRate);        
+      }); 
     });     
 
     this.__exchangeRateService.getDataHistoryExchange(this.data.id).subscribe(result => {
@@ -50,52 +62,49 @@ export class DialogEditExchangeComponent implements OnInit {
 
 
   findElementsMoney(id) {
-    return this.arrMoneyDestiny.find(elem => elem.value == id);
+    return this.arrMoneyDestiny.find(elem => elem.currencyExchangeId == id);
   }
 
   hanlderValueChanges() {
     this.formGroup.valueChanges.subscribe(result => {
       if(result.amountOrigin != "" && result.rateExchange != "" && result.currencyExchangeId) 
       {
-        const money_destiny = this.findElementsMoney(result.money_destiny);
+        const money_destiny = this.findElementsMoney(result.currencyExchangeId);
 
-        if(money_destiny.mathematicalOperator == 'm') 
-          this.formGroup.controls.amountExchange.setValue(result.amountOrigin * result.rateExchange, {emitEvent: false});
+        if(money_destiny.mathematicalOperator == 'M') 
+          this.formGroup.controls.amountExchange.setValue((result.amountOrigin * result.rateExchange).toFixed(2), {emitEvent: false});
         else 
-          this.formGroup.controls.amountExchange.setValue(result.amountOrigin / result.rateExchange, {emitEvent: false});
+          this.formGroup.controls.amountExchange.setValue((result.amountOrigin / result.rateExchange).toFixed(2), {emitEvent: false});
       }
-    })
+    });
 
-    this.formGroup.controls.money_origin.valueChanges.subscribe(result => {
-      console.log(result);
-      this.arrMoneyDestiny = [
-        {
-          value: 2,
-          viewValue: 'Soles',
-          operator: 'm'
-        },
-        {
-          value: 3,
-          viewValue: 'Euros',
-          operator: 'd'
-        }
-      ]
+    this.formGroup.controls.currencyOriginId.valueChanges.subscribe(result => {
       this.__exchangeRateService.getMoneyDestiny(result).subscribe( result => {
-        //Setear lista de monedas destino
+        this.arrMoneyDestiny = result;
       })
-    })
+    });
+    
+    this.formGroup.controls.currencyExchangeId.valueChanges.subscribe(currencyExchangeId => {
+      if(currencyExchangeId) 
+      {
+        if(this.formGroup.controls.rateExchange.value =="")
+        {
+          const money_destiny = this.findElementsMoney(currencyExchangeId);
+
+          this.formGroup.controls.rateExchange.setValue(money_destiny.rateExchange);
+        }
+      }      
+    });      
   }
 
 
-  __buildFormGroup(data):FormGroup {
-    return this.__fb.group({
-      id: [data.id || ""],
-      currencyOriginId: [data.currencyOriginId || ""],
-      amountOrigin: [data.amountOrigin || ""],
-      currencyExchangeId: [data.currencyExchangeId || ""],      
-      rateExchange: [data.rateExchange || ""],
-      amountExchange: [data.amountExchange || ""]      
-    })
+  __buildFormGroup(data) {
+    this.formGroup.get("id").setValue(data.id,{emitEvent: false});
+    this.formGroup.get("currencyOriginId").setValue(data.currencyOriginId,{emitEvent: false});
+    this.formGroup.get("amountOrigin").setValue(data.amountOrigin,{emitEvent: false});
+    this.formGroup.get("currencyExchangeId").setValue(data.currencyExchangeId,{emitEvent: false});
+    this.formGroup.get("rateExchange").setValue(data.rateExchange,{emitEvent: false});
+    this.formGroup.get("amountExchange").setValue(data.amountExchange,{emitEvent: false});
   }
 
 

@@ -19,6 +19,16 @@ export class DialogCreateExchangeComponent implements OnInit {
     this.formGroup = this.__buildFormGroup();
    }
 
+   __buildFormGroup():FormGroup {
+    return this.__fb.group({
+      currencyOriginId: [''],
+      amountOrigin: [''],
+      currencyExchangeId: [''],      
+      rateExchange: [''],
+      amountExchange: ['']
+    })
+  }
+
   money = []
   arrMoneyDestiny = [];
   ngOnInit() {
@@ -32,39 +42,45 @@ export class DialogCreateExchangeComponent implements OnInit {
     
   }
 
-  __buildFormGroup():FormGroup {
-    return this.__fb.group({
-      currencyOriginId: [''],
-      amountOrigin: [''],
-      currencyExchangeId: [''],      
-      rateExchange: [''],
-      amountExchange: ['']
-    })
-  }
+
   findElementsMoney(id) {
-    return this.arrMoneyDestiny.find(elem => elem.value == id);
+    return this.arrMoneyDestiny.find(elem => elem.currencyExchangeId == id);
   }
 
   hanlderValueChanges() {
+
     this.formGroup.valueChanges.subscribe(result => {
       if(result.amountOrigin != "" && result.rateExchange != "" && result.currencyExchangeId) 
       {
-        const money_destiny = this.findElementsMoney(result.money_destiny);
+        console.log(result.currencyExchangeId);
 
-        if(money_destiny.mathematicalOperator == 'm') 
-          this.formGroup.controls.amountExchange.setValue(result.amountOrigin * result.rateExchange, {emitEvent: false});
+        const money_destiny = this.findElementsMoney(result.currencyExchangeId);
+        console.log(money_destiny);
+        if(money_destiny.mathematicalOperator == 'M') 
+          this.formGroup.controls.amountExchange.setValue((result.amountOrigin * result.rateExchange).toFixed(2), {emitEvent: false});
         else 
-          this.formGroup.controls.amountExchange.setValue(result.amountOrigin / result.rateExchange, {emitEvent: false});
+        this.formGroup.controls.amountExchange.setValue((result.amountOrigin / result.rateExchange).toFixed(2), {emitEvent: false});
       }
     })
 
     this.formGroup.controls.currencyOriginId.valueChanges.subscribe(result => {
-      console.log(result);
-
       this.__exchangeRateService.getMoneyDestiny(result).subscribe( result => {
         this.arrMoneyDestiny = result;
       })
     })
+
+    this.formGroup.controls.currencyExchangeId.valueChanges.subscribe(currencyExchangeId => {
+      if(currencyExchangeId) 
+      {
+        if(this.formGroup.controls.rateExchange.value =="")
+        {
+          const money_destiny = this.findElementsMoney(currencyExchangeId);
+
+          this.formGroup.controls.rateExchange.setValue(money_destiny.rateExchange);
+        }
+      }      
+    })    
+
   }
 
   hanlderSaveExchange() {

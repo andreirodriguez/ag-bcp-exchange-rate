@@ -23,6 +23,9 @@ export class ExchangeRatesService {
   }
 
   getAllExchange(currencyOriginId,currencyExchangeId,registerDateUntil,registerDateTo,pageIndex,pageSize):Observable<PaginationExchangeRateResponse> {
+    currencyOriginId = currencyOriginId || 0;
+    currencyExchangeId = currencyExchangeId || 0;
+
      return this.__httpClient.get<PaginationExchangeRateResponse>(environment.backend_url + `exchange-rates/find-all/inbox?currencyOriginId=${currencyOriginId}&currencyExchangeId=${currencyExchangeId}&registerDateUntil=${registerDateUntil}&registerDateTo=${registerDateTo}&pageIndex=${pageIndex}&pageSize=${pageSize}&sort=register_datetime ASC`);
   }
 
