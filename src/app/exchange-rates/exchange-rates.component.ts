@@ -57,7 +57,8 @@ export class ExchangeRatesComponent implements OnInit {
   }
 
   openDialogCreateExchange() {
-    const dialogRef = this.dialog.open(DialogCreateExchangeComponent);
+    const dialogRef = this.dialog.open(DialogCreateExchangeComponent, {width: '450px'});
+    
     dialogRef.componentInstance.registerExchange.subscribe( 
       result => {
         console.log('Se realizó el registro');
@@ -68,9 +69,15 @@ export class ExchangeRatesComponent implements OnInit {
   }
 
   openDialogEditExchange(id) {
-    const dialogRef = this.dialog.open(DialogEditExchangeComponent, {
-      data: {id}
-    });
+    const dialogRef = this.dialog.open(DialogEditExchangeComponent, { data: {id},width: 'auto' });
+
+    dialogRef.componentInstance.registerExchange.subscribe( 
+      result => {
+        console.log('Se realizó el registro');
+        dialogRef.close();
+        this.handleGetAllExchange();
+      }
+    )    
   }
 
   handlerChangePagination(event) {

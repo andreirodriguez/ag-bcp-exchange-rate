@@ -37,9 +37,13 @@ export class ExchangeRatesService {
     return this.__httpClient.get<CurrencyExchange[]>(environment.backend_url + `currencies-exchange/search/currency-origin?currencyOriginId=${currencyOriginId}&sort=currency_exchange_symbol asc`);
   }
 
-  saveExchange(objCreate: ExchangeRateRequest) {
-    return this.__httpClient.post(environment.backend_url + `exchange-rates`, objCreate);
+  saveExchange(create: ExchangeRateRequest) {
+    return this.__httpClient.post(environment.backend_url + `exchange-rates`, create);
   }
+
+  updateExchange(id,update: ExchangeRateRequest) {
+    return this.__httpClient.put(environment.backend_url + `exchange-rates/${id}`, update);
+  }  
 
   login(usuario, password) {
     return this.__httpClient.get(environment.backend_url);

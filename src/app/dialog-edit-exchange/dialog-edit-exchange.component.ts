@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ExchangeRateResponse, ExchangeRatesService } from '../exchange-rates.service';
+import { ExchangeRateRequest, ExchangeRateResponse, ExchangeRatesService } from '../exchange-rates.service';
 import {MatTableDataSource, MAT_DIALOG_DATA} from '@angular/material';
 import { forkJoin } from 'rxjs';
 
@@ -13,6 +13,7 @@ import { forkJoin } from 'rxjs';
 export class DialogEditExchangeComponent implements OnInit {
 
   formGroup:FormGroup;
+  @Output() registerExchange = new EventEmitter();
 
   money = []
   arrMoneyDestiny = [];
@@ -83,7 +84,7 @@ export class DialogEditExchangeComponent implements OnInit {
         this.arrMoneyDestiny = result;
       })
     });
-    
+
     this.formGroup.controls.currencyExchangeId.valueChanges.subscribe(currencyExchangeId => {
       if(currencyExchangeId) 
       {
@@ -106,6 +107,26 @@ export class DialogEditExchangeComponent implements OnInit {
     this.formGroup.get("rateExchange").setValue(data.rateExchange,{emitEvent: false});
     this.formGroup.get("amountExchange").setValue(data.amountExchange,{emitEvent: false});
   }
+
+  hanlderSaveExchange() {
+    let objCreateExchange:ExchangeRateRequest = {
+      currencyOriginId: this.formGroup.value.currencyOriginId,
+      amountOrigin: this.formGroup.value.amountOrigin,
+      currencyExchangeId: this.formGroup.value.currencyExchangeId,
+      rateExchange: this.formGroup.value.rateExchange,
+      registerUserId: JSON.parse(sessionStorage.getItem('user'))['id'],
+      registerUserFullname: JSON.parse(sessionStorage.getItem('user'))['user']
+    };
+
+    this.__exchangeRateService.updateExchange(this.formGroup.value.id,objCreateExchange).subscribe(
+      result => {
+        this.registerExchange.emit();
+      },
+      error => {
+        alert('Hubo un error');
+      }
+    );
+  }  
 
 
 }

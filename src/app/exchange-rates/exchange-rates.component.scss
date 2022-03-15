@@ -1,3 +1,25 @@
 table {
     width: 100%;
 }
+
+.container-exchange {
+    padding: 50px;
+
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+
+        mat-form-field {
+            width: 49%;
+        }
+
+        mat-form-field:nth-child(2), mat-form-field:nth-child(4) {
+            padding-left: 2%;
+        }
+    }
+
+    mat-paginator {
+        margin-top: 20px;
+    }
+}
