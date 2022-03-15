@@ -11,9 +11,7 @@ export class InterceptorService {
         if (user != undefined) {//validar si el usuario esta en sesion existe token
             const token = JSON.parse(sessionStorage.getItem('user')).token;
             httpRequest = httpRequest.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${token}` //concatenar token
-                }
+                //setHeaders: { Authorization: `Bearer ${token}` }
             });
         }
         return next.handle(httpRequest);
